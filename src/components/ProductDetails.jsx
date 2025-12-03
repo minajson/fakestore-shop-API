@@ -2,20 +2,46 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getProductById } from '../api.js';
 
-const NAIRA_RATE = 1600; // <--- add this
-
 function DetailSkeleton() {
-  // (leave as is)
+  return (
+    <section className="product-detail">
+      <div className="product-detail-image-wrapper skeleton-block" />
+      <div className="product-detail-body">
+        <div className="skeleton-line skeleton-line-lg" />
+        <div className="skeleton-line skeleton-line-md" />
+        <div className="skeleton-line skeleton-line-sm" />
+        <div className="skeleton-line skeleton-line-md" />
+        <div className="skeleton-button" />
+      </div>
+    </section>
+  );
 }
 
 export default function ProductDetails({ onAddToCart }) {
-  // ... existing code ...
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const response = await getProductById(id); // GET /products/:id
+        setProduct(response.data);
+      } catch (err) {
+        console.error(err);
+        setError('Could not load product.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProduct();
+  }, [id]);
 
   if (loading) return <DetailSkeleton />;
   if (error) return <p className="center-text error">{error}</p>;
   if (!product) return null;
-
-  const priceInNaira = product.price * NAIRA_RATE;
 
   return (
     <section className="product-detail">
@@ -29,12 +55,7 @@ export default function ProductDetails({ onAddToCart }) {
 
       <div className="product-detail-body">
         <h2>{product.title}</h2>
-
-        {/* Naira price here */}
-        <p className="product-price big">
-          ₦{priceInNaira.toLocaleString('en-NG', { maximumFractionDigits: 0 })}
-        </p>
-
+        <p className="product-price big">${product.price.toFixed(2)}</p>
         <p className="product-category">
           Category:{' '}
           {product.category.charAt(0).toUpperCase() +

@@ -1,7 +1,10 @@
-
 import { Link } from 'react-router-dom';
 
+const NAIRA_RATE = 1600; // <--- add this
+
 export default function ProductCard({ product, onAddToCart }) {
+  const priceInNaira = product.price * NAIRA_RATE;
+
   return (
     <article className="product-card">
       <div className="product-image-wrapper">
@@ -20,7 +23,11 @@ export default function ProductCard({ product, onAddToCart }) {
         </h3>
 
         <p className="product-category">{product.category}</p>
-        <p className="product-price">${product.price.toFixed(2)}</p>
+
+        {/* Show Naira instead of dollars */}
+        <p className="product-price">
+          ₦{priceInNaira.toLocaleString('en-NG', { maximumFractionDigits: 0 })}
+        </p>
 
         <div className="card-actions">
           <button

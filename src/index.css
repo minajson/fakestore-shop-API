@@ -217,9 +217,24 @@ body {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr); /* 3 per row on laptop/desktop */
 }
+
+/* Tablet view (2 in a row) */
+@media (max-width: 992px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Phone view (1 in a row) */
+@media (max-width: 600px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .product-card {
   background: #ffffff;
